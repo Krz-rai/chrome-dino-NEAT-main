@@ -1,0 +1,323 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+  <!-- Meta Tags and CSS Links -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Quiz App - Your Profile</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+  <!-- Custom CSS -->
+  <style>
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+  
+    /* Global Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+  
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      padding-top: 70px;
+      color: #333333;
+    }
+  
+    /* Navbar Styles */
+    .navbar-custom {
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      padding: 15px 0;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+  
+    .navbar-custom .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+    }
+  
+    .navbar-left a {
+      color: #333333;
+      margin-right: 25px;
+      text-decoration: none;
+      font-weight: 500;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+  
+    .navbar-left a:hover,
+    .navbar-left a.active {
+      color: #667eea;
+    }
+  
+    .navbar-left a.active::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background-color: #667eea;
+      bottom: -5px;
+      left: 0;
+      border-radius: 2px;
+    }
+  
+    .navbar-center h2 {
+      color: #333333;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+  
+    .navbar-right .logout-btn {
+      background-color: #667eea;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 25px;
+      color: #fff;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+  
+    .navbar-right .logout-btn:hover {
+      background-color: #764ba2;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+  
+    /* Main Content */
+    .profile-container {
+      padding: 40px 30px;
+      max-width: 600px;
+      margin: 40px auto 20px auto;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+  
+    .profile-container:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+  
+    .profile-container h2 {
+      text-align: center;
+      color: #667eea;
+      margin-bottom: 30px;
+      font-weight: 700;
+      font-size: 1.8rem;
+    }
+  
+    .form-group {
+      margin-bottom: 25px;
+    }
+  
+    .form-group label {
+      font-weight: 500;
+      color: #34495e;
+      display: block;
+      margin-bottom: 8px;
+    }
+  
+    .form-control {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      padding: 15px 20px;
+      font-size: 1.1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+      background-color: #fff;
+    }
+  
+    .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+      outline: none;
+      background-color: #f9fafe;
+    }
+  
+    /* Button Styles */
+    .btn-save {
+      background-color: #667eea;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 50px;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      width: 100%;
+      margin-top: 25px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+  
+    .btn-save:hover {
+      background-color: #764ba2;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+  
+    .btn-change-password {
+      background-color: #f1c40f;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 50px;
+      color: #333333;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      width: 100%;
+      margin-top: 15px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      display: block;
+      text-decoration: none;
+    }
+  
+    .btn-change-password:hover {
+      background-color: #f39c12;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    }
+  
+    /* Alert Styles */
+    .alert-custom {
+      font-size: 1rem;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+  
+    .alert-dismissible .close {
+      position: relative;
+      top: -5px;
+      right: -5px;
+      font-size: 1.2rem;
+      padding: 0.75rem;
+      cursor: pointer;
+      color: inherit;
+    }
+  
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .navbar-custom .container {
+        padding: 0 20px;
+      }
+  
+      .profile-container {
+        padding: 30px 20px;
+      }
+  
+      .profile-container h2 {
+        font-size: 1.6rem;
+      }
+    }
+  
+    @media (max-width: 576px) {
+      .profile-container {
+        padding: 20px;
+      }
+  
+      .profile-container h2 {
+        font-size: 1.5rem;
+      }
+  
+      .form-control {
+        font-size: 1rem;
+        padding: 12px 18px;
+      }
+  
+      .btn-save, .btn-change-password {
+        font-size: 0.95rem;
+        padding: 12px 20px;
+      }
+    }
+  </style>
+  
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar-custom">
+    <div class="container">
+      <div class="navbar-left">
+        <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+        <a href="{% url 'profile' %}" class="{% if request.resolver_match.url_name == 'profile' %}active{% endif %}">Profile</a>
+        <a href="{% url 'results' %}" class="{% if request.resolver_match.url_name == 'results' %}active{% endif %}">Results</a>
+        {% if user.is_staff %}
+          <a href="{% url 'admin:index' %}" class="{% if request.resolver_match.url_name == 'admin:index' %}active{% endif %}">Admin</a>
+        {% endif %}
+      </div>
+
+      <div class="navbar-center">
+        <h2>Welcome, {{ user.first_name|default:user.username }}</h2>
+      </div>
+
+      <div class="navbar-right">
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Profile Container -->
+  <div class="profile-container">
+    <h2>Manage Your Profile</h2>
+
+    <!-- Display Messages -->
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-custom alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <!-- Form with regular input fields -->
+    <form method="post" action="{% url 'update_profile' %}">
+      {% csrf_token %}
+      <div class="form-group">
+        <label for="first_name">First Name</label>
+        <input type="text" name="first_name" id="first_name" class="form-control" value="{{ user.first_name }}">
+      </div>
+
+      <div class="form-group">
+        <label for="last_name">Last Name</label>
+        <input type="text" name="last_name" id="last_name" class="form-control" value="{{ user.last_name }}">
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" class="form-control" value="{{ user.email }}">
+      </div>
+
+      <button type="submit" class="btn-save">Save Changes</button>
+    </form>
+
+    <a href="{% url 'forgot-password' %}" class="btn-change-password">Change Password</a>
+  </div>
+
+  <!-- Bootstrap JS and Dependencies -->
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <script src="{% static 'js/popper.min.js' %}"></script>
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>

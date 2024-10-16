@@ -1,0 +1,456 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+<head>
+  <!-- Meta Tags and CSS Links -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Quiz Results</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Using 'Poppins' font for a modern look -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap CSS (Updated to Bootstrap 5) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+  <!-- Custom CSS -->
+  <style>
+    /* CSS Variables for Consistent Theme Colors */
+    :root {
+      --primary-color: #4F46E5; /* Indigo-600 */
+      --primary-dark: #3730A3; /* Indigo-800 */
+      --secondary-color: #F3F4F6; /* Gray-100 */
+      --success-color: #10B981; /* Green-500 */
+      --danger-color: #EF4444; /* Red-500 */
+      --warning-color: #F59E0B; /* Amber-500 */
+      --info-color: #3B82F6; /* Blue-500 */
+      --text-color: #1F2937; /* Gray-800 */
+      --navbar-bg: #ffffff;
+      --background-color: #F9FAFB; /* Gray-50 */
+      --shadow-color: rgba(0, 0, 0, 0.05);
+      --border-radius: 0.5rem;
+      --transition-speed: 0.3s;
+    }
+
+    /* Global Styles */
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--background-color);
+      margin: 0;
+      padding-top: 70px; /* For fixed navbar */
+      color: var(--text-color);
+    }
+
+    /* Navbar Styles */
+    .navbar-custom {
+      background-color: var(--navbar-bg);
+      box-shadow: 0 1px 4px var(--shadow-color);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .navbar-nav .nav-link {
+      color: var(--text-color);
+      font-weight: 500;
+      margin-right: 1rem;
+      transition: color var(--transition-speed) ease;
+    }
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+      color: var(--primary-color);
+    }
+
+    /* Main Content */
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    /* Section Title */
+    .section-title {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    /* Pie Chart Styles */
+    .pie-chart-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+
+    .pie-chart-card {
+      background-color: #ffffff;
+      padding: 1rem;
+      margin: 1rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 4px var(--shadow-color);
+      width: 300px;
+      text-align: center;
+    }
+
+    .pie-chart-card h5 {
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    .pie-chart-card canvas {
+      max-width: 100%;
+      height: 250px; /* Set fixed height */
+    }
+
+    /* Accordion Styles */
+    .accordion-button {
+      background-color: #ffffff;
+      color: var(--text-color);
+      font-weight: 500;
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      margin-bottom: 0.5rem;
+      transition: background-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+    }
+
+    .accordion-button:not(.collapsed) {
+      background-color: var(--secondary-color);
+      box-shadow: 0 2px 4px var(--shadow-color);
+    }
+
+    .accordion-button:hover {
+      background-color: var(--secondary-color);
+      box-shadow: 0 2px 4px var(--shadow-color);
+    }
+
+    .accordion-body {
+      background-color: #ffffff;
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 4px var(--shadow-color);
+    }
+
+    /* Question Result Styles */
+    .question-result {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-left: 4px solid transparent;
+      background-color: #f9fafb;
+      border-radius: 4px;
+      transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+    }
+
+    .question-result.correct {
+      border-color: var(--success-color);
+      background-color: #ecfdf5; /* Green-50 */
+    }
+
+    .question-result.wrong {
+      border-color: var(--danger-color);
+      background-color: #fee2e2; /* Red-50 */
+    }
+
+    .question-result p {
+      margin-bottom: 0.5rem;
+    }
+
+    .correct-answer {
+      color: var(--success-color);
+      font-weight: 500;
+    }
+
+    .user-answer {
+      color: var(--danger-color);
+      font-weight: 500;
+    }
+
+    .explanation {
+      background-color: #e5e7eb;
+      padding: 0.75rem;
+      border-radius: 4px;
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+      .section-title {
+        font-size: 1.75rem;
+      }
+
+      .accordion-button {
+        font-size: 1rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .accordion-button {
+        padding: 0.75rem 1rem;
+      }
+
+      .question-result {
+        padding: 0.75rem;
+      }
+
+      .explanation {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+
+  <!-- Include Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Main App Container -->
+  <div class="app">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+      <div class="container">
+        <!-- Brand -->
+        <a class="navbar-brand" href="{% url 'home' %}">QuizApp</a>
+
+        <!-- Toggler for mobile view -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'profile' %}">Profile</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" href="{% url 'results' %}">Results</a>
+            </li>
+            {% if user.is_staff %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <h2 class="section-title">Your Quiz Results</h2>
+
+      <!-- Pie Charts for Each Category -->
+      <h3 class="section-title">Category Performance</h3>
+      <div class="pie-chart-container">
+        {% for category_name, stats in category_stats %}
+          <div class="pie-chart-card">
+            <h5>{{ category_name }}</h5>
+            <canvas id="categoryPieChart-{{ forloop.counter }}" width="250" height="250"></canvas>
+            <ul class="list-group mt-3">
+              <li class="list-group-item">Total Correct: {{ stats.total_correct }}</li>
+              <li class="list-group-item">Total Incorrect: {{ stats.total_incorrect }}</li>
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Pie Charts for Each Topic -->
+      <h3 class="section-title">Topic Performance</h3>
+      <div class="pie-chart-container">
+        {% for topic_name, stats in topic_stats %}
+          <div class="pie-chart-card">
+            <h5>{{ topic_name }}</h5>
+            <canvas id="topicPieChart-{{ forloop.counter }}" width="250" height="250"></canvas>
+            <ul class="list-group mt-3">
+              <li class="list-group-item">Total Correct: {{ stats.total_correct }}</li>
+              <li class="list-group-item">Total Incorrect: {{ stats.total_incorrect }}</li>
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Display Quiz Attempts using Bootstrap Accordion -->
+      <div class="accordion" id="quizResultsAccordion">
+        {% for attempt in quiz_attempts_desc %}
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="heading-{{ forloop.counter }}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse-{{ forloop.counter }}">
+                <div>
+                  <h5>{{ attempt.category.name }} - {{ attempt.date_taken|date:"M d, Y H:i" }}</h5>
+                  <p class="mb-0"><strong>Score:</strong> {{ attempt.score }} / {{ attempt.total_marks }}</p>
+                </div>
+              </button>
+            </h2>
+            <div id="collapse-{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading-{{ forloop.counter }}" data-bs-parent="#quizResultsAccordion">
+              <div class="accordion-body">
+                {% for question_result in attempt.question_results.all %}
+                  <div class="question-result {% if question_result.is_correct %}correct{% else %}wrong{% endif %}">
+                    {% if question_result.question.passage %}
+                      <p><strong>Topic:</strong> {{ question_result.question.passage.title }}</p>
+                    {% else %}
+                      <p><strong>Topic:</strong> No Topic</p>
+                    {% endif %}
+                    <p><strong>Question:</strong> {{ question_result.question.text }}</p>
+                    <p><strong>Your Answer:</strong>
+                      {% if question_result.selected_answer %}
+                        {{ question_result.selected_answer.text }}
+                      {% else %}
+                        No answer selected
+                      {% endif %}
+                    </p>
+                    <p><strong>Correct Answer:</strong>
+                      {% for answer in question_result.question.answers.all %}
+                        {% if answer.is_correct %}
+                          {{ answer.text }}
+                        {% endif %}
+                      {% endfor %}
+                    </p>
+                    <div class="explanation">
+                      <strong>Explanation:</strong>
+                      {{ question_result.question.explanation|safe }}
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% empty %}
+          <p>You have no quiz attempts.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS (Using Bootstrap 5 bundle which includes Popper.js) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Script to initialize the pie charts -->
+  <script>
+    // Data passed from the view
+    var categoryStats = JSON.parse('{{ category_stats_json|escapejs }}');
+    var topicStats = JSON.parse('{{ topic_stats_json|escapejs }}');
+
+    // Function to initialize pie charts
+    function initPieCharts() {
+      var counter = 1;
+      // Initialize Category Pie Charts
+      for (var categoryName in categoryStats) {
+        var stats = categoryStats[categoryName];
+        var ctx = document.getElementById('categoryPieChart-' + counter).getContext('2d');
+
+        var data = {
+          labels: ['Total Correct', 'Total Incorrect'],
+          datasets: [{
+            data: [stats.total_correct, stats.total_incorrect],
+            backgroundColor: ['#10B981', '#EF4444'], // Green and Red colors
+          }]
+        };
+
+        var pieChart = new Chart(ctx, {
+          type: 'pie',
+          data: data,
+          options: {
+            responsive: true,
+            maintainAspectRatio: true, // Set to true to maintain aspect ratio
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  font: {
+                    family: 'Poppins',
+                  },
+                },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    var label = context.label || '';
+                    var value = context.parsed || 0;
+                    // Calculate total
+                    var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    var percentage = ((value / total) * 100).toFixed(2) + '%';
+                    return label + ': ' + value + ' (' + percentage + ')';
+                  }
+                }
+              }
+            },
+          },
+        });
+
+        counter++;
+      }
+
+      // Initialize Topic Pie Charts
+      counter = 1;
+      for (var topicName in topicStats) {
+        var stats = topicStats[topicName];
+        var ctx = document.getElementById('topicPieChart-' + counter).getContext('2d');
+
+        var data = {
+          labels: ['Total Correct', 'Total Incorrect'],
+          datasets: [{
+            data: [stats.total_correct, stats.total_incorrect],
+            backgroundColor: ['#10B981', '#EF4444'], // Green and Red colors
+          }]
+        };
+
+        var pieChart = new Chart(ctx, {
+          type: 'pie',
+          data: data,
+          options: {
+            responsive: true,
+            maintainAspectRatio: true, // Set to true to maintain aspect ratio
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  font: {
+                    family: 'Poppins',
+                  },
+                },
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    var label = context.label || '';
+                    var value = context.parsed || 0;
+                    // Calculate total
+                    var total = context.dataset.data.reduce((a, b) => a + b, 0);
+                    var percentage = ((value / total) * 100).toFixed(2) + '%';
+                    return label + ': ' + value + ' (' + percentage + ')';
+                  }
+                }
+              }
+            },
+          },
+        });
+
+        counter++;
+      }
+    }
+
+    // Initialize pie charts on DOM content loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      initPieCharts();
+    });
+  </script>
+</body>
+</html>

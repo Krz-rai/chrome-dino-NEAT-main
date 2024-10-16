@@ -1,0 +1,1281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required Meta Tags -->
+  <meta charset="utf-8">
+  <!-- Viewport Meta Tag for Responsive Design -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Bootstrap CSS (Optional) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css" crossorigin="anonymous">
+  <!-- Page Title -->
+  <title>Quiz App</title>
+
+  <!-- Custom Styles -->
+  <style>
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #f9f9f9;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Transition Styles for Vue.js Components */
+.slide-fade-enter-active {
+  animation: slide-fade-in 0.5s ease-out forwards;
+}
+.slide-fade-leave-active {
+  animation: slide-fade-out 0.5s ease-out forwards;
+}
+@keyframes slide-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes slide-fade-out {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+}
+
+/* Overlay Fade-In Animation */
+.overlay-fade-enter-active {
+  animation: overlay-fade-in 0.5s ease-out forwards;
+}
+.overlay-fade-leave-active {
+  animation: overlay-fade-out 0.5s ease-out forwards;
+}
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes overlay-fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Navbar Styles */
+.navbar-custom {
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.navbar-left a {
+  color: #4a4a4a;
+  margin-right: 15px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.navbar-left a:hover {
+  color: #007bff;
+}
+
+.navbar-center {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-grow: 1;
+  justify-content: center;
+}
+
+.navbar-center h2 {
+  color: #333333;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Time Remaining in Navbar */
+.time-remaining {
+  font-weight: bold;
+  font-size: 1.1rem;
+  background-color: rgba(0, 123, 255, 0.1);
+  padding: 8px 12px;
+  border-radius: 20px;
+  color: #333;
+}
+
+/* Progress Bar Styles */
+.progress-navbar {
+  width: 200px;
+  height: 12px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  position: relative;
+}
+
+.progress-bar {
+  background-color: #007bff;
+  height: 100%;
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* Next Passage Button Styles */
+.next-passage-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.next-btn {
+  background-color: #007bff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.next-btn:hover {
+  background-color: #0056b3;
+}
+
+.next-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Semi-Circle Set Timer Button */
+.set-timer-btn {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 60px;
+  height: 120px;
+  background-color: #007bff;
+  border: none;
+  border-top-left-radius: 60px;
+  border-bottom-left-radius: 60px;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.set-timer-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-50%) scale(1.05);
+}
+
+/* Animation for Timer Overlay */
+.timer-overlay-enter-active,
+.timer-overlay-leave-active {
+  transition: transform 0.3s ease-out;
+}
+.timer-overlay-enter {
+  transform: translateX(100%);
+}
+.timer-overlay-leave-to {
+  transform: translateX(100%);
+}
+
+/* Timer Overlay Styles */
+.timer-overlay {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 0;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
+  z-index: 2000;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+.timer-overlay.open {
+  width: 300px;
+}
+
+.timer-overlay-content {
+  padding: 20px;
+  text-align: center;
+}
+
+.timer-overlay-content h3 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+/* Timer Input Styles */
+.timer-input {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.timer-input input {
+  width: 60px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1rem;
+  background-color: #fafafa;
+}
+
+.timer-input input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.timer-submit-btn {
+  background-color: #007bff;
+  border: none;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-right: 10px;
+}
+
+.timer-submit-btn:hover {
+  background-color: #0056b3;
+}
+
+.timer-cancel-btn {
+  background-color: #e0e0e0;
+  border: none;
+  color: #333;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.timer-cancel-btn:hover {
+  background-color: #bdbdbd;
+}
+
+/* Quiz Container */
+.quiz-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 100px 20px 20px; /* Adjusted padding for fixed navbar */
+  position: relative;
+  max-width: 1700px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Question Card Styles */
+.question-card {
+  width: 100%;
+  max-width: 1700px;
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Layout for Passage and Questions */
+.content-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  overflow: hidden;
+  flex: 1;
+}
+
+/* Single Column Layout for No Passage */
+.content-wrapper.single-column {
+  flex-direction: column;
+}
+
+/* Passage Section */
+.passage-section {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 650px;
+  padding-right: 10px;
+  border-right: 1px solid #ccc;
+}
+
+.passage-section h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+/* Questions Section */
+.questions-section {
+  flex: 1;
+  overflow-y: auto;
+  max-height: 650px;
+  padding-left: 10px;
+}
+
+/* Full-width Questions Section */
+.questions-section.full-width {
+  padding-left: 0;
+}
+
+/* Custom Scrollbar Styles */
+.passage-section::-webkit-scrollbar,
+.questions-section::-webkit-scrollbar {
+  width: 6px;
+}
+
+.passage-section::-webkit-scrollbar-thumb,
+.questions-section::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+/* Button Styles */
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+/* Hint Button Styles */
+.hint-btn {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: rgba(255, 244, 174, 0.5);
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: #333;
+  font-size: 1rem;
+}
+
+.hint-btn:hover {
+  background-color: rgba(255, 236, 139, 0.5);
+}
+
+/* Liquid Effect Inside Hint Button */
+.hint-btn .liquid {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 236, 139, 0.9);
+  transition: height 0.3s ease;
+  z-index: 0;
+}
+
+.hint-btn .liquid-text {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1.5rem;
+}
+
+/* Answer Options */
+.form-check-label {
+  display: block;
+  margin-bottom: 15px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Feedback Styles */
+.feedback {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.feedback.correct {
+  color: #28a745;
+}
+
+.feedback.wrong {
+  color: #dc3545;
+}
+
+/* Question Block Styles */
+.question-block {
+  margin-bottom: 30px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 20px;
+}
+
+.question-block:last-child {
+  border-bottom: none;
+}
+
+.question-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Explanation Styles */
+.explanation {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-left: 4px solid #007bff;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.3s ease;
+}
+
+.explanation.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hint Styles */
+.hint {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #6c757d;
+  line-height: 1.5;
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-left: 4px solid #6c757d;
+}
+
+/* Container for Buttons and Hint */
+.button-and-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+/* Overlay for Test Completion */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.overlay-content-completed {
+  background-color: #fff;
+  padding: 40px 60px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 600px;
+  width: 90%;
+  overflow-y: auto;
+  max-height: 90vh;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.overlay-content-completed h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+  font-weight: 700;
+}
+
+.overlay-content-completed p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #555;
+}
+
+.overlay-content-completed h3 {
+  margin-top: 30px;
+  color: #333;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+}
+
+/* Review Section Styles */
+.review-section {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 20px;
+  text-align: left;
+}
+
+.review-passage {
+  margin-bottom: 30px;
+}
+
+.review-passage h4 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.review-question {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #e9ecef;
+  border-radius: 5px;
+  background-color: #f8f9fa;
+}
+
+.review-question.correct {
+  border-left: 5px solid #28a745;
+}
+
+.review-question.wrong {
+  border-left: 5px solid #dc3545;
+}
+
+.review-question p {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.correct-answer {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.user-answer {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* Explanation in Review Section */
+.overlay-explanation {
+  margin-top: 10px;
+  background-color: #ffffff;
+  padding: 10px;
+  border-left: 4px solid #007bff;
+  border-radius: 3px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .content-wrapper {
+    flex-direction: column;
+  }
+
+  .passage-section,
+  .questions-section {
+    max-height: none;
+    padding: 0;
+    border: none;
+  }
+
+  .progress-navbar {
+    width: 150px;
+  }
+
+  .navbar-center {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .button-and-hint {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .button-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hint-btn {
+    width: 100%;
+    height: 50px;
+  }
+
+  .quiz-container {
+    padding-top: 120px; /* Adjusted for smaller screens */
+  }
+
+  .overlay-content-completed {
+    padding: 30px 40px;
+  }
+
+  .overlay-content-completed h2 {
+    font-size: 1.8rem;
+  }
+
+  .overlay-content-completed p {
+    font-size: 1.1rem;
+  }
+
+  .overlay-content-completed h3 {
+    font-size: 1.3rem;
+  }
+
+  .review-passage h4 {
+    font-size: 1rem;
+  }
+
+  .review-question p {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .overlay-content-completed {
+    padding: 20px;
+  }
+
+  .overlay-content-completed h2 {
+    font-size: 1.6rem;
+  }
+
+  .overlay-content-completed p {
+    font-size: 1rem;
+  }
+
+  .overlay-content-completed h3 {
+    font-size: 1.2rem;
+  }
+
+  .review-passage h4 {
+    font-size: 0.9rem;
+  }
+
+  .review-question p {
+    font-size: 0.8rem;
+  }
+}
+
+/* Loading Screen Styles */
+#loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  border: 12px solid #f3f3f3; /* Light grey */
+  border-top: 12px solid #007bff; /* Blue */
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+  </style>
+  
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Vue App Container -->
+  <div id="app">
+    <!-- Navbar -->
+    <nav class="navbar-custom">
+      <div class="navbar-left">
+        <!-- Navigation Links -->
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'logout' %}">Logout</a>
+      </div>
+
+      <div class="navbar-center">
+        <!-- Time Remaining -->
+        <div v-if="timer > 0 && !quizCompleted" class="time-remaining">
+          Time Remaining: [[ formattedTime ]]
+        </div>
+        <!-- Progress Bar -->
+        <div v-if="quizStarted && !quizCompleted" class="progress-navbar">
+          <div class="progress-bar" :style="{ width: progressPercentage + '%' }"></div>
+        </div>
+
+
+      <div class="navbar-right">
+        <!-- Next Passage Button -->
+        <div class="next-passage-btn">
+          <button @click="nextPassage" class="next-btn" :disabled="!allQuestionsChecked">
+            [[ nextButtonText ]]
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Semi-Circle Set Timer Button -->
+    <button @click="toggleTimerOverlay" class="set-timer-btn" title="Set Timer">
+      🕒
+    </button>
+
+    <!-- Timer Overlay -->
+    <transition name="timer-overlay">
+      <div v-if="showTimerOverlay" class="timer-overlay open">
+        <div class="timer-overlay-content">
+          <h3>Set Your Timer</h3>
+          <form @submit.prevent="setTimer">
+            <div class="timer-input">
+              <input type="number" v-model.number="timerMinutes" min="0" placeholder="MM" required>
+              <span>:</span>
+              <input type="number" v-model.number="timerSeconds" min="0" max="59" placeholder="SS" required>
+            </div>
+            <button type="submit" class="timer-submit-btn">Start Timer</button>
+            <button @click="cancelTimer" type="button" class="timer-cancel-btn">Cancel</button>
+          </form>
+        </div>
+      </div>
+    </transition>
+
+    <!-- Quiz Container -->
+    <div v-if="quizStarted && !quizCompleted" class="quiz-container">
+      <!-- Question Card with Transition -->
+      <transition name="slide-fade" mode="out-in">
+        <div v-if="currentPassage" :key="currentPassageIndex" class="question-card">
+          <div :class="['content-wrapper', !hasPassage ? 'single-column' : '']">
+            <!-- Passage Section -->
+            <div v-if="hasPassage" class="passage-section">
+              <h4>[[ currentPassage.title ]]</h4>
+              <hr>
+              <div class="passage-content" v-html="currentPassage.text"></div>
+            </div>
+
+            <!-- Questions Section -->
+            <div :class="['questions-section', !hasPassage ? 'full-width' : '']">
+              <!-- Display Questions -->
+              <div v-for="(question, qIndex) in currentPassage.questions" :key="question.uid" class="question-block">
+                <p class="question-text">[[ question.text ]]</p>
+
+                <!-- Answer Options -->
+                <div v-for="(answer, aIndex) in question.answers" :key="aIndex">
+                  <label class="form-check-label">
+                    <input type="radio"
+                           :name="'question_' + qIndex"
+                           @change="selectAnswer(qIndex, aIndex)"
+                           :disabled="question.checked">
+                    [[ answer.text ]]
+                  </label>
+                </div>
+
+                <!-- Buttons and Hint -->
+                <div class="button-and-hint">
+                  <div class="button-group">
+                    <button @click.prevent="checkAnswer(qIndex)" class="btn-primary">Check</button>
+                    <div class="hint-btn" @click="cycleHint(qIndex)" title="View Hint">
+                      <div class="liquid" :style="{ height: liquidLevels[qIndex] + '%' }"></div>
+                      <span class="liquid-text">💡</span>
+                    </div>
+                  </div>
+                  <!-- Hint Display -->
+                  <div v-if="question.currentHintIndex !== null && question.hints[question.currentHintIndex]">
+                    <p class="hint" v-html="question.hints[question.currentHintIndex]"></p>
+                  </div>
+                </div>
+
+                <!-- Feedback and Explanation -->
+                <transition name="fade">
+                  <div>
+                    <p v-if="question.feedback"
+                       :class="['feedback', question.feedback.correct ? 'correct' : 'wrong']">
+                      [[ question.feedback.message ]]
+                    </p>
+
+                    <!-- Explanation (Rich Text) -->
+                    <p v-if="question.showExplanation" class="explanation visible" v-html="question.explanation"></p>
+                  </div>
+                </transition>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+
+    <!-- Overlay for Test Completion -->
+    <transition name="overlay-fade">
+      <div v-if="quizCompleted" class="overlay">
+        <div class="overlay-content-completed">
+          <h2>Test Completed</h2>
+          <p>Your final score is: <strong>[[ score ]]</strong></p>
+          
+          <!-- Review Section -->
+          <h3>Review of Your Answers</h3>
+          <div class="review-section">
+            <div v-for="(passage, pIndex) in passages" :key="pIndex" class="review-passage">
+              <h4 v-if="passage.title">Passage: [[ passage.title ]]</h4>
+              <div v-for="(question, qIndex) in passage.questions" :key="question.uid" 
+                   :class="['review-question', question.feedback && question.feedback.correct ? 'correct' : 'wrong']">
+                <p class="question-text"><strong>Q[[ qIndex + 1 ]]:</strong> [[ question.text ]]</p>
+                <p class="user-answer"><strong>Your Answer:</strong> [[ getUserAnswer(pIndex, qIndex) ]]</p>
+                <p class="correct-answer"><strong>Correct Answer:</strong> [[ getCorrectAnswer(pIndex, qIndex) ]]</p>
+                <div class="overlay-explanation" v-if="question.showExplanation">
+                  <strong>Explanation:</strong>
+                  <p v-html="question.explanation"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <a href="{% url 'home' %}" class="btn-primary mt-4">Go to Home</a>
+        </div>
+      </div>
+    </transition>
+  </div>
+
+  <!-- CSRF Token for Security -->
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  {% csrf_token %}
+
+  <!-- Vue.js Library -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      delimiters: ['[[', ']]'], // Custom delimiters to avoid conflict with Django templates
+      data() {
+        return {
+          category: '{{ category }}', // Quiz category passed from Django
+          passages: [], // Array to hold passages and questions
+          currentPassageIndex: 0, // Index of the current passage
+          currentPassage: null, // Current passage object
+          timer: 0, // Timer in seconds
+          timerInterval: null, // Reference to the timer interval
+          score: 0, // User's score
+          quizStarted: true, // Flag to indicate if the quiz has started
+          quizCompleted: false, // Flag to indicate if the quiz is completed
+          timerMinutes: 0, // Minutes input for the timer
+          timerSeconds: 0, // Seconds input for the timer
+          showTimerOverlay: false, // Control visibility of timer overlay
+          transitionName: 'slide-fade', // Transition name for Vue.js
+          liquidLevels: [], // Array to track "juice" levels for hints
+        };
+      },
+      computed: {
+        // Formatted Time Remaining
+        formattedTime() {
+          if (this.timer > 0) {
+            const minutes = Math.floor(this.timer / 60);
+            const seconds = this.timer % 60;
+            return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+          } else {
+            return '0:00';
+          }
+        },
+        // Text for the Next Button
+        nextButtonText() {
+          return this.currentPassageIndex < this.passages.length - 1 ? 'Next Passage' : 'Finish Quiz';
+        },
+        // Progress Percentage for Progress Bar
+        progressPercentage() {
+          if (!this.currentPassage || !this.currentPassage.questions.length) return 0;
+          const completedQuestions = this.currentPassage.questions.filter(q => q.checked).length;
+          const totalQuestions = this.currentPassage.questions.length;
+          return (completedQuestions / totalQuestions) * 100;
+        },
+        // Check if Current Passage has Text
+        hasPassage() {
+          return !!(this.currentPassage && this.currentPassage.text && this.currentPassage.text.trim() !== '');
+        },
+        // Check if All Questions are Answered
+        allQuestionsChecked() {
+          if (!this.currentPassage || !this.currentPassage.questions.length) return false;
+          return this.currentPassage.questions.every(q => q.checked);
+        },
+      },
+      methods: {
+        // Fetch Questions from API
+        getQuestions() {
+          fetch(`/api/quiz/?category=${this.category}`)
+            .then(response => response.json())
+            .then(result => {
+              if (result.status) {
+                if (Array.isArray(result.data) && result.data.length > 0) {
+                  if (result.data[0].questions) {
+                    // For data with passages
+                    this.passages = result.data.map(passage => {
+                      passage.questions = passage.questions.map(question => ({
+                        ...question,
+                        feedback: null,
+                        showExplanation: false,
+                        checked: false,
+                        selectedAnswer: null,
+                        currentHintIndex: null, // Initialize hint index
+                        hints: question.hints, // Array of hints
+                      }));
+                      return passage;
+                    });
+                  } else {
+                    // For data without passages
+                    this.passages = [{
+                      title: '',
+                      text: '',
+                      questions: result.data.map(question => ({
+                        ...question,
+                        feedback: null,
+                        showExplanation: false,
+                        checked: false,
+                        selectedAnswer: null,
+                        currentHintIndex: null,
+                        hints: question.hints,
+                      }))
+                    }];
+                  }
+                  this.currentPassage = this.passages[this.currentPassageIndex];
+                  this.initializeLiquidLevels();
+                } else {
+                  console.error('No data returned from API.');
+                }
+              } else {
+                console.error('Error fetching data:', result.message);
+              }
+            })
+            .catch(error => console.log('Error fetching questions:', error));
+        },
+
+        // Initialize Juice Levels for Hints
+        initializeLiquidLevels() {
+          // Set liquid levels to 100% for all questions
+          this.currentPassage.questions.forEach((question, index) => {
+            this.$set(this.liquidLevels, index, 100); // Full "juice" at start
+          });
+        },
+
+        // Start the Timer
+        startTimer() {
+          if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+          }
+          this.timerInterval = setInterval(() => {
+            if (this.timer > 0) {
+              this.timer--;
+            } else {
+              clearInterval(this.timerInterval);
+              this.timerExpired();
+            }
+          }, 1000);
+        },
+
+        // Handle Timer Expiry
+        timerExpired() {
+          this.passages.forEach(passage => {
+            passage.questions.forEach(question => {
+              question.checked = true;
+              question.showExplanation = true;
+
+              // If feedback hasn't been set (e.g., user didn't check the answer), set it now
+              if (!question.feedback) {
+                const selectedAnswer = question.selectedAnswer;
+                const isCorrect = selectedAnswer !== null && question.answers[selectedAnswer].is_correct;
+                const feedbackMessage = isCorrect ? '✅ Correct Answer!' : '❌ Wrong Answer!';
+
+                this.$set(question, 'feedback', {
+                  correct: isCorrect,
+                  message: feedbackMessage
+                });
+
+                if (isCorrect) {
+                  this.score += question.marks;
+                }
+              }
+            });
+          });
+          this.quizCompleted = true;
+          this.quizStarted = false;
+          this.sendQuizResults(); // Send results upon timer expiry
+        },
+
+        // Handle Answer Selection
+        selectAnswer(qIndex, aIndex) {
+          const question = this.currentPassage.questions[qIndex];
+          this.$set(question, 'selectedAnswer', aIndex);
+        },
+
+        // Check the Selected Answer
+        checkAnswer(qIndex) {
+          const question = this.currentPassage.questions[qIndex];
+          const selectedAnswer = question.selectedAnswer;
+
+          if (selectedAnswer === null || selectedAnswer === undefined) {
+            alert('Please select an answer before checking.');
+            return;
+          }
+
+          const isCorrect = question.answers[selectedAnswer].is_correct;
+          const feedbackMessage = isCorrect ? '✅ Correct Answer!' : '❌ Wrong Answer!';
+
+          this.$set(question, 'feedback', {
+            correct: isCorrect,
+            message: feedbackMessage
+          });
+
+          if (isCorrect) {
+            this.score += question.marks;
+          }
+
+          // Update question status
+          this.$set(question, 'checked', true);
+          this.$set(question, 'showExplanation', true);
+        },
+
+        // Cycle Through Hints
+        cycleHint(qIndex) {
+          const question = this.currentPassage.questions[qIndex];
+          const totalHints = question.hints.length;
+
+          if (totalHints === 0) return;
+
+          // Show next hint
+          if (question.currentHintIndex === null) {
+            this.$set(question, 'currentHintIndex', 0);
+          } else {
+            const nextIndex = (question.currentHintIndex + 1) % totalHints;
+            this.$set(question, 'currentHintIndex', nextIndex);
+          }
+
+          // Reduce liquid level based on hints used
+          const decrement = 100 / totalHints;
+          const remainingJuice = this.liquidLevels[qIndex] - decrement;
+          this.$set(this.liquidLevels, qIndex, Math.max(remainingJuice, 0)); // Ensure it doesn't go below 0
+        },
+
+        // Move to Next Passage or Finish Quiz
+        nextPassage() {
+          if (this.currentPassageIndex < this.passages.length - 1) {
+            this.currentPassageIndex++;
+            this.currentPassage = this.passages[this.currentPassageIndex];
+            // Reset states for the new passage
+            this.currentPassage.questions.forEach(question => {
+              this.$set(question, 'checked', false);
+              this.$set(question, 'feedback', null);
+              this.$set(question, 'showExplanation', false);
+              this.$set(question, 'selectedAnswer', null);
+              this.$set(question, 'currentHintIndex', null);
+            });
+            this.initializeLiquidLevels();
+          } else {
+            // Show explanations before completing
+            this.passages.forEach(passage => {
+              passage.questions.forEach(question => {
+                this.$set(question, 'showExplanation', true);
+              });
+            });
+            if (this.timerInterval) {
+              clearInterval(this.timerInterval);
+            }
+            this.quizCompleted = true;
+            this.quizStarted = false;
+            this.sendQuizResults();
+          }
+        },
+
+        // Set the Timer Based on User Input
+        setTimer() {
+          const totalSeconds = (this.timerMinutes * 60) + this.timerSeconds;
+          if (totalSeconds >= 10) {
+            this.timer = totalSeconds;
+            this.showTimerOverlay = false;
+            this.startTimer();
+          } else {
+            alert('Please enter a timer duration of at least 10 seconds.');
+          }
+        },
+
+        // Cancel the Timer Setup
+        cancelTimer() {
+          this.showTimerOverlay = false;
+        },
+
+        // Toggle Timer Overlay
+        toggleTimerOverlay() {
+          this.showTimerOverlay = !this.showTimerOverlay;
+        },
+
+        // Get User's Answer for Review
+        getUserAnswer(pIndex, qIndex) {
+          const question = this.passages[pIndex].questions[qIndex];
+          if (question.selectedAnswer !== null && question.selectedAnswer !== undefined) {
+            return question.answers[question.selectedAnswer].text;
+          }
+          return 'No answer selected';
+        },
+
+        // Get Correct Answer for Review
+        getCorrectAnswer(pIndex, qIndex) {
+          const question = this.passages[pIndex].questions[qIndex];
+          const correct = question.answers.find(answer => answer.is_correct);
+          return correct ? correct.text : 'No correct answer provided';
+        },
+
+        // Calculate Total Marks
+        calculateTotalMarks() {
+          let total = 0;
+          this.passages.forEach(passage => {
+            passage.questions.forEach(question => {
+              total += question.marks;
+            });
+          });
+          return total;
+        },
+
+        // Send Quiz Results to the Server
+        sendQuizResults() {
+          // Prepare data to send
+          const quizData = {
+            score: this.score,
+            total_marks: this.calculateTotalMarks(),
+            category: this.category,
+            passages: this.passages.map(passage => ({
+              title: passage.title,
+              text: passage.text,
+              questions: passage.questions.map(question => ({
+                id: question.id,
+                text: question.text,
+                selectedAnswerId: question.selectedAnswer !== null ? question.answers[question.selectedAnswer].id : null,
+                is_correct: question.feedback ? question.feedback.correct : false,
+                explanation: question.explanation,
+                hints_used: question.currentHintIndex !== null ? question.currentHintIndex + 1 : 0,
+              })),
+            })),
+          };
+
+          fetch('/save_quiz_results/', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': '{{ csrf_token }}', // Django's CSRF token for security
+            },
+            body: JSON.stringify(quizData),
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.status) {
+              console.log('Quiz results saved successfully.');
+            } else {
+              console.error('Error saving quiz results:', data.message);
+            }
+          })
+          .catch(error => console.error('Error:', error));
+        },
+      },
+      created() {
+        // Fetch questions when the component is created
+        this.getQuestions();
+      }
+    });
+  </script>
+
+  <!-- Bootstrap JS and Dependencies (Optional) -->
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+
+  <!-- Loading Screen Script -->
+  <script>
+    // Hide the loading screen once the window has fully loaded
+    window.addEventListener('load', function() {
+      const loadingScreen = document.getElementById('loading-screen');
+      loadingScreen.style.display = 'none';
+    });
+  </script>
+</body>
+</html>
